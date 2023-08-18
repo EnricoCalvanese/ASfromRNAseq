@@ -11,5 +11,8 @@
 #directories
 FASTA_FILE=/global/scratch/users/enricocalvane/RNAseq_imb2/Athaliana_447_TAIR10.fa
 GTF_FILE=/global/scratch/users/enricocalvane/RNAseq_imb2/Araport11_GTF_genes_transposons.current.gtf
+
+module load hisat2/2.1.0
+
 #run hisat2 build
 $ hisat2-build -p $SLURM_NTASKS $FASTA_FILE $GTF_FILE
