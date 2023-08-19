@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=HISAT
+#SBATCH --job-name=Convert-Sort-to-BAM
 #SBATCH --account=fc_rnaseq
 #SBATCH --partition=savio2
 #SBATCH --qos=savio_normal
@@ -23,10 +23,10 @@ samtools view -bS imb2-2_FRRB190012053_hisat.sam > imb2-2_FRRB190012053_hisat.ba
 samtools view -bS imb2-3_FRRB190012054_hisat.sam > imb2-3_FRRB190012054_hisat.bam
 
 #sort BAM files
-samtools sort Col-0-1_FRRB190012049_hisat.bam Col-0-1_FRRB190012049_hisat_sorted.bam
-samtools sort Col-0-2_FRRB190012050_hisat.bam Col-0-2_FRRB190012050_hisat_sorted.bam
-samtools sort Col-0-3_FRRB190012051_hisat.bam Col-0-3_FRRB190012051_hisat_sorted.bam
-samtools sort imb2-1_FRRB190012052_hisat.bam imb2-1_FRRB190012052_hisat_sorted.bam
-samtools sort imb2-2_FRRB190012053_hisat.bam imb2-2_FRRB190012053_hisat_sorted.bam
-samtools sort imb2-3_FRRB190012054_hisat.bam imb2-3_FRRB190012054_hisat_sorted.bam
+samtools sort Col-0-1_FRRB190012049_hisat.bam -o Col-0-1_FRRB190012049_hisat_sorted.bam
+samtools sort Col-0-2_FRRB190012050_hisat.bam -o Col-0-2_FRRB190012050_hisat_sorted.bam
+samtools sort Col-0-3_FRRB190012051_hisat.bam -o Col-0-3_FRRB190012051_hisat_sorted.bam
+samtools sort imb2-1_FRRB190012052_hisat.bam -o imb2-1_FRRB190012052_hisat_sorted.bam
+samtools sort imb2-2_FRRB190012053_hisat.bam -o imb2-2_FRRB190012053_hisat_sorted.bam
+samtools sort imb2-3_FRRB190012054_hisat.bam -o imb2-3_FRRB190012054_hisat_sorted.bam
 
