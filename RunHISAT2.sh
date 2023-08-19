@@ -20,22 +20,22 @@ module load hisat2/2.1.0
 #hisat2 -x $INDEX_FOLDER/Araport11_GTF_genes_transposons.current.gtf -1 Col-0-1_FRRB190012049-1a_1.clean.fq.gz,Col-0-2_FRRB190012050-1a_1.clean.fq.gz,Col-0-3_FRRB190012051-1a_1.clean.fq.gz,imb2-1_FRRB190012052-1a_1.clean.fq.gz,imb2-2_FRRB190012053-1a_1.clean.fq.gz,imb2-3_FRRB190012054-1a_1.clean.fq.gz -2 Col-0-1_FRRB190012049-1a_2.clean.fq.gz,Col-0-2_FRRB190012050-1a_2.clean.fq.gz,Col-0-3_FRRB190012051-1a_2.clean.fq.gz,imb2-1_FRRB190012052-1a_2.clean.fq.gz,imb2-2_FRRB190012053-1a_2.clean.fq.gz,imb2-3_FRRB190012054-1a_2.clean.fq.gz -S $OUTPUT_FOLDER/Col-0-1_FRRB190012049-1a_hisat.sam -p $SLURM_NTASKS
 
 # First pair of input FASTQ files
-hisat2 -x $INDEX_FOLDER/Araport11_GTF_genes_transposons -1 Col-0-1_FRRB190012049-1a_1.clean.fq.gz -2 Col-0-1_FRRB190012049-1a_2.clean.fq.gz -S $OUTPUT_FOLDER/Col-0-1_FRRB190012049_hisat.sam -p $SLURM_NTASKS
+hisat2 -x $INDEX_FOLDER/Araport11_GTF_genes_transposons.current.gtf -1 Col-0-1_FRRB190012049-1a_1.clean.fq.gz -2 Col-0-1_FRRB190012049-1a_2.clean.fq.gz -S $OUTPUT_FOLDER/Col-0-1_FRRB190012049_hisat.sam -p $SLURM_NTASKS
 
 # Second pair of input FASTQ files
-hisat2 -x $INDEX_FOLDER/Araport11_GTF_genes_transposons -1 Col-0-2_FRRB190012050-1a_1.clean.fq.gz -2 Col-0-2_FRRB190012050-1a_2.clean.fq.gz -S $OUTPUT_FOLDER/Col-0-2_FRRB190012050_hisat.sam -p $SLURM_NTASKS
+hisat2 -x $INDEX_FOLDER/Araport11_GTF_genes_transposons.current.gtf -1 Col-0-2_FRRB190012050-1a_1.clean.fq.gz -2 Col-0-2_FRRB190012050-1a_2.clean.fq.gz -S $OUTPUT_FOLDER/Col-0-2_FRRB190012050_hisat.sam -p $SLURM_NTASKS
 
 # Third pair of input FASTQ files
-hisat2 -x $INDEX_FOLDER/Araport11_GTF_genes_transposons -1 Col-0-3_FRRB190012051-1a_1.clean.fq.gz -2 Col-0-3_FRRB190012051-1a_2.clean.fq.gz -S $OUTPUT_FOLDER/Col-0-3_FRRB190012051_hisat.sam -p $SLURM_NTASKS
+hisat2 -x $INDEX_FOLDER/Araport11_GTF_genes_transposons.current.gtf -1 Col-0-3_FRRB190012051-1a_1.clean.fq.gz -2 Col-0-3_FRRB190012051-1a_2.clean.fq.gz -S $OUTPUT_FOLDER/Col-0-3_FRRB190012051_hisat.sam -p $SLURM_NTASKS
 
 # Fourth pair of input FASTQ files
-hisat2 -x $INDEX_FOLDER/Araport11_GTF_genes_transposons -1 imb2-1_FRRB190012052-1a_1.clean.fq.gz -2 imb2-1_FRRB190012052-1a_2.clean.fq.gz -S $OUTPUT_FOLDER/imb2-1_FRRB190012052_hisat.sam -p $SLURM_NTASKS
+hisat2 -x $INDEX_FOLDER/Araport11_GTF_genes_transposons.current.gtf -1 imb2-1_FRRB190012052-1a_1.clean.fq.gz -2 imb2-1_FRRB190012052-1a_2.clean.fq.gz -S $OUTPUT_FOLDER/imb2-1_FRRB190012052_hisat.sam -p $SLURM_NTASKS
 
 # Fifth pair of input FASTQ files
-hisat2 -x $INDEX_FOLDER/Araport11_GTF_genes_transposons -1 imb2-2_FRRB190012053-1a_1.clean.fq.gz -2 imb2-2_FRRB190012053-1a_2.clean.fq.gz -S $OUTPUT_FOLDER/imb2-2_FRRB190012053_hisat.sam -p $SLURM_NTASKS
+hisat2 -x $INDEX_FOLDER/Araport11_GTF_genes_transposons.current.gtf -1 imb2-2_FRRB190012053-1a_1.clean.fq.gz -2 imb2-2_FRRB190012053-1a_2.clean.fq.gz -S $OUTPUT_FOLDER/imb2-2_FRRB190012053_hisat.sam -p $SLURM_NTASKS
 
 # Sixth pair of input FASTQ files
-hisat2 -x $INDEX_FOLDER/Araport11_GTF_genes_transposons -1 imb2-3_FRRB190012054-1a_1.clean.fq.gz -2 imb2-3_FRRB190012054-1a_2.clean.fq.gz -S $OUTPUT_FOLDER/imb2-3_FRRB190012054_hisat.sam -p $SLURM_NTASKS
+hisat2 -x $INDEX_FOLDER/Araport11_GTF_genes_transposons.current.gtf -1 imb2-3_FRRB190012054-1a_1.clean.fq.gz -2 imb2-3_FRRB190012054-1a_2.clean.fq.gz -S $OUTPUT_FOLDER/imb2-3_FRRB190012054_hisat.sam -p $SLURM_NTASKS
 
 # Repeat the above format for additional pairs
 
