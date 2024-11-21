@@ -12,26 +12,40 @@
 input_msa="Curated.FL-ECLIPSE.msa.fasta"
 output_tree="FL-ECLIPSE.tree"
 
-# Ensure input file is in Unix format
-dos2unix "$input_msa"
+# Set the input MSA file
+input_msa="Curated.FL-ECLIPSE.msa.fasta"
+output_tree="FL-ECLIPSE.tree"
 
-# Generate bootstrap replicates
+# Explicitly copy input file to infile
+cp "$input_msa" infile
+
+# Run seqboot with explicit input
 seqboot << EOF
-$input_msa
+D
+J
 R
 1000
+W
+N
+C
+N
+S
+I
 Y
 12345
 Y
 EOF
 
 # Check if bootstrapped file was created
-if [ ! -f "bootstrapped.fasta" ]; then
+if [ ! -f "outfile" ]; then
     echo "Error: Bootstrap file not created"
     exit 1
 fi
 
-# Split the bootstrapped file into individual files
+# Rename outfile to bootstrapped.fasta
+mv outfile bootstrapped.fasta
+
+# Split the bootstrapped file
 csplit -z -b "%03d.fasta" -f replicate bootstrapped.fasta '/^>/' '{*}'
 
 # Build trees for each replicate
@@ -48,7 +62,7 @@ all_trees.tre
 Y
 EOF
 
-# Rename the output to the desired output name
+# Rename the output
 if [ -f outfile ]; then
     mv outfile "$output_tree"
 else
@@ -57,4 +71,4 @@ else
 fi
 
 # Optional: Clean up intermediate files
-rm replicate*.fasta replicate*.newick all_trees.tre bootstrapped.fasta
+rm infile replicate*.fasta replicate*.newick all_trees.tre bootstrapped.fasta
