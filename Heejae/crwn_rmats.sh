@@ -9,29 +9,25 @@
 #SBATCH --mail-user=enrico_calvane@berkeley.edu
 #SBATCH --mail-type=ALL
 
-# Define directories with the correct paths
+# Define directories
 ALIGNED_DIR=/global/scratch/users/enricocalvane/heejae_as/crwn_data/aligned_bams
 GTF_FILE=/global/scratch/users/enricocalvane/riboseq/Xu2017/tair10_reference/Arabidopsis_thaliana.TAIR10.60.gtf
 OUTPUT_BASE=/global/scratch/users/enricocalvane/heejae_as/crwn_data/rmats_output
 
-# Create output directory and temporary directory for rMATS processing
+# Create output directory
 mkdir -p $OUTPUT_BASE
-mkdir -p $OUTPUT_BASE/tmp
 
-# Function to run rMATS analysis for each comparison
-# This function handles the core analysis with optimized parameters for global splicing detection
+# Function to run rMATS for each comparison
 run_rmats() {
-    local comparison=$1      # Name of the comparison (e.g., "crwn1_vs_wt")
-    local b1_file=$2        # Path to file containing BAM files for condition 1 (WT)
-    local b2_file=$3        # Path to file containing BAM files for condition 2 (mutant)
+    local comparison=$1
+    local b1_file=$2
+    local b2_file=$3
     local output_dir=${OUTPUT_BASE}/${comparison}
 
     echo "Starting rMATS analysis for comparison: $comparison at $(date)"
     
-    # Create comparison-specific output directory
     mkdir -p $output_dir
     
-    # Run rMATS with optimized parameters for global splicing analysis
     rmats.py \
         --b1 $b1_file \
         --b2 $b2_file \
@@ -42,18 +38,15 @@ run_rmats() {
         --nthread $SLURM_NTASKS \
         --tstat $SLURM_NTASKS \
         --cstat 0.05 \
-        --libType fr-unstranded \
-        --variable-read-length \
-        --allow-clipping \
-        --tmp $OUTPUT_BASE/tmp/${comparison}
+        --libType fr-unstranded
 
     echo "Completed rMATS analysis for $comparison at $(date)"
 }
 
-# Create BAM list files for each condition
+# Create BAM list files
 echo "Creating BAM list files..."
 
-# Wild type samples (control group)
+# Wild type samples
 echo "${ALIGNED_DIR}/SRR7657889_02_WT.sorted.bam,${ALIGNED_DIR}/SRR7657890_01_WT.sorted.bam,${ALIGNED_DIR}/SRR7657898_03_WT.sorted.bam" > $OUTPUT_BASE/wt_bams.txt
 
 # CRWN1 samples
@@ -73,8 +66,7 @@ echo "${ALIGNED_DIR}/SRR7657885_18_crwn1_crwn4.sorted.bam,${ALIGNED_DIR}/SRR7657
 
 echo "Starting all rMATS comparisons at $(date)"
 
-# Run comparisons for each mutant vs wild type
-# Running these sequentially to ensure stable memory usage
+# Run all comparisons
 echo "Running CRWN1 vs WT comparison..."
 run_rmats "crwn1_vs_wt" \
     $OUTPUT_BASE/wt_bams.txt \
