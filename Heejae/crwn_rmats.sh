@@ -10,11 +10,9 @@
 #SBATCH --mail-type=ALL
 
 # Define paths
+ALIGNED_DIR=/global/scratch/users/enricocalvane/heejae_as/crwn_data/aligned_bams
 GTF_FILE=/global/scratch/users/enricocalvane/riboseq/Xu2017/tair10_reference/Arabidopsis_thaliana.TAIR10.60.gtf
 OUTPUT_BASE=/global/scratch/users/enricocalvane/heejae_as/crwn_data/rmats_output
-
-# Create output directory if it doesn't exist
-mkdir -p $OUTPUT_BASE
 
 # Function to run rMATS for a comparison
 run_rmats() {
@@ -25,7 +23,6 @@ run_rmats() {
 
     echo "Starting rMATS analysis for comparison: $comparison at $(date)"
     
-    # Create the output directory for this comparison
     mkdir -p $output_dir
     
     rmats.py \
@@ -38,17 +35,15 @@ run_rmats() {
         --nthread $SLURM_NTASKS \
         --tstat $SLURM_NTASKS \
         --cstat 0.0001 \
-        --libType fr-unstranded \
-        --novelSS \
-        --statoff
+        --libType fr-unstranded
 
     echo "Completed rMATS analysis for $comparison at $(date)"
 }
 
-# First, create the BAM list files
+# Create the BAM list files
 echo "Creating BAM list files..."
 
-# Wild type samples
+# Wild type samples (control group)
 echo "${ALIGNED_DIR}/SRR7657889_02_WT.sorted.bam,${ALIGNED_DIR}/SRR7657890_01_WT.sorted.bam,${ALIGNED_DIR}/SRR7657898_03_WT.sorted.bam" > $OUTPUT_BASE/wt_bams.txt
 
 # CRWN1 samples
@@ -66,9 +61,9 @@ echo "${ALIGNED_DIR}/SRR7657887_13_crwn1_crwn2.sorted.bam,${ALIGNED_DIR}/SRR7657
 # CRWN1/CRWN4 double mutant samples
 echo "${ALIGNED_DIR}/SRR7657885_18_crwn1_crwn4.sorted.bam,${ALIGNED_DIR}/SRR7657886_17_crwn1_crwn4.sorted.bam,${ALIGNED_DIR}/SRR7657899_16_crwn1_crwn4.sorted.bam" > $OUTPUT_BASE/crwn1_crwn4_bams.txt
 
-# Run all comparisons
 echo "Starting all rMATS comparisons at $(date)"
 
+# Run all comparisons
 # CRWN1 vs WT
 run_rmats "crwn1_vs_wt" \
     $OUTPUT_BASE/wt_bams.txt \
