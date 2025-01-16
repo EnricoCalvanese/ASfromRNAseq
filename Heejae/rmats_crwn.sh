@@ -9,10 +9,14 @@
 #SBATCH --mail-user=enrico_calvane@berkeley.edu
 #SBATCH --mail-type=ALL
 
-module load gcc/11.4.0
-module load gsl/2.7.1
+# Activate conda environment and set up library paths
+source ~/.bashrc
+conda activate rmats_env
 
-# Define paths
+# Set library path to find MKL and GSL
+export LD_LIBRARY_PATH=/global/home/users/enricocalvane/.conda/envs/rmats_env/lib:$LD_LIBRARY_PATH
+
+# Define paths (rest of your original paths)
 RMATS_PATH=/global/scratch/users/enricocalvane/rmats_turbo/rmats-turbo/rmats.py
 GTF_FILE=/global/scratch/users/enricocalvane/heejae_as/reference/TAIR10_fixed.gtf
 ALIGNED_DIR=/global/scratch/users/enricocalvane/heejae_as/crwn_data/aligned_bams
