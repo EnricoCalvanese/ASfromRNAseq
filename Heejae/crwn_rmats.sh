@@ -21,6 +21,7 @@ OUTPUT_BASE=/global/scratch/users/enricocalvane/heejae_as/crwn_data/rmats_output
 
 # Create the output directory if it doesn't exist
 mkdir -p $OUTPUT_BASE
+mkdir -p $OUTPUT_BASE/tmp
 
 # Create BAM list files for each condition, using the unique mapped reads
 echo "Creating BAM list files for uniquely mapped reads..."
@@ -66,7 +67,8 @@ run_rmats() {
         --nthread $SLURM_NTASKS \
         --tstat $SLURM_NTASKS \
         --cstat 0.05 \
-        --libType fr-unstranded
+        --libType fr-unstranded \
+        --tmp $OUTPUT_BASE/tmp
 
     echo "Completed rMATS analysis for $comparison at $(date)"
 }
