@@ -5,7 +5,7 @@
 #SBATCH --qos=savio_normal
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=24
-#SBATCH --time=24:00:00
+#SBATCH --time=1:00:00
 #SBATCH --mail-user=enrico_calvane@berkeley.edu
 #SBATCH --mail-type=ALL
 
@@ -15,6 +15,8 @@ GTF_FILE=/global/scratch/users/enricocalvane/heejae_as/reference/TAIR10_fixed.gt
 ALIGNED_DIR=/global/scratch/users/enricocalvane/heejae_as/crwn_data/aligned_bams
 OUTPUT_BASE=/global/scratch/users/enricocalvane/heejae_as/crwn_data/rmats_output
 TMP_DIR=/global/scratch/users/enricocalvane/heejae_as/crwn_data/rmats_tmp
+
+cd /global/scratch/users/enricocalvane/rmats_turbo/rmats-turbo/
 
 # Create output directories
 mkdir -p $OUTPUT_BASE $TMP_DIR
