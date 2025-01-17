@@ -1,0 +1,73 @@
+When running rMATS on the Savio cluster, we initially encountered an error related to missing shared libraries. The specific error message was:
+
+```bash
+/global/scratch/users/enricocalvane/rmats_turbo/rmats-turbo/rMATS_C/rMATSexe: error while loading shared libraries: libgsl.so.25: cannot open shared object file: No such file or directory
+```
+
+This error indicated that rMATS was unable to find the GNU Scientific Library (GSL) it needed to run. When we resolved this by installing GSL, we encountered a second error related to Intel's Math Kernel Library (MKL):
+
+```bash
+/global/scratch/users/enricocalvane/rmats_turbo/rmats-turbo/rMATS_C/rMATSexe: error while loading shared libraries: libmkl_rt.so.1: cannot open shared object file: No such file or directory
+```
+
+To resolve these issues, we took the following steps:
+
+1. First, we installed the required libraries using conda in our rMATS environment:
+```bash
+conda activate rmats_env
+conda install -c conda-forge gsl
+conda install -c conda-forge mkl mkl-service numpy scipy openblas
+```
+
+2. We then needed to ensure these libraries could be found by rMATS at runtime. This required setting up the correct library path and creating a necessary symbolic link. Here's the complete solution implemented in the script:
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=rmats_turbo
+#SBATCH --account=fc_rnaseq
+#SBATCH --partition=savio2
+#SBATCH --qos=savio_normal
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=24
+#SBATCH --time=1:00:00
+#SBATCH --mail-user=enrico_calvane@berkeley.edu
+#SBATCH --mail-type=ALL
+
+# Activate conda environment
+source ~/.bashrc
+conda activate rmats_env
+
+# Set the LD_LIBRARY_PATH to include conda environment's library directory
+# This tells the system where to find the required shared libraries
+export LD_LIBRARY_PATH=/global/home/users/enricocalvane/.conda/envs/rmats_env/lib:$LD_LIBRARY_PATH
+
+# Create symbolic link for MKL library (only needs to be done once)
+cd /global/home/users/enricocalvane/.conda/envs/rmats_env/lib
+ln -s libmkl_rt.so.2 libmkl_rt.so.1
+
+# Define paths for rMATS analysis
+RMATS_PATH=/global/scratch/users/enricocalvane/rmats_turbo/rmats-turbo/rmats.py
+GTF_FILE=/global/scratch/users/enricocalvane/heejae_as/reference/TAIR10_fixed.gtf
+ALIGNED_DIR=/global/scratch/users/enricocalvane/heejae_as/crwn_data/aligned_bams
+OUTPUT_BASE=/global/scratch/users/enricocalvane/heejae_as/crwn_data/rmats_output
+TMP_DIR=/global/scratch/users/enricocalvane/heejae_as/crwn_data/rmats_tmp
+
+# Rest of your rMATS analysis commands...
+```
+
+The key components that made this solution work are:
+
+1. Installing Dependencies:
+   - GSL provides essential scientific computing functions
+   - MKL provides optimized mathematical operations
+   - Additional libraries (numpy, scipy, openblas) ensure complete numerical computing support
+
+2. Library Path Configuration:
+   - Setting LD_LIBRARY_PATH ensures the system can find the installed libraries
+   - The path must point to the conda environment's lib directory where the libraries are installed
+
+3. Symbolic Link Creation:
+   - Creates a link from libmkl_rt.so.2 to libmkl_rt.so.1
+   - This allows rMATS to find the specific library version it expects
+
+It's important to note that these paths are specific to the Savio cluster setup. If implementing this solution elsewhere, you would need to adjust the paths according to your system's configuration. The conda environment should be set up and activated before running the script, and the symbolic link only needs to be created once after installing the libraries.
