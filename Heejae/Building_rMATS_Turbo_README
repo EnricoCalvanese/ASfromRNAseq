@@ -1,0 +1,179 @@
+# Building rMATS-Turbo v4.3.0 on Savio HPC
+
+This guide provides detailed instructions for building rMATS-Turbo v4.3.0 on the Savio High-Performance Computing (HPC) cluster. These instructions have been specifically tested and verified on Savio.
+
+## Prerequisites
+
+Before starting the build process, ensure you have the following modules available on your system:
+- Python (through conda)
+- R
+- OpenBLAS
+- GSL (GNU Scientific Library)
+
+## Step-by-Step Build Instructions
+
+### 1. Create and Enter Working Directory
+
+First, create a directory for rMATS-Turbo and navigate to it:
+
+```bash
+cd /global/scratch/users/$USER
+mkdir rmats_turbo
+cd rmats_turbo
+```
+
+### 2. Clone the Repository
+
+Clone the rMATS-Turbo repository and checkout the correct version:
+
+```bash
+git clone https://github.com/Xinglab/rmats-turbo.git
+cd rmats-turbo
+git checkout v4.3.0
+```
+
+### 3. Set Up Conda Environment
+
+Create a new conda environment with Python 3.8 and install Cython:
+
+```bash
+conda create -n rmats_env python=3.8 cython
+conda activate rmats_env
+```
+
+### 4. Load Required Modules
+
+Load the necessary modules:
+
+```bash
+module load r
+module load openblas
+```
+
+### 5. Modify Build Files
+
+The build process requires two modifications to work correctly on Savio:
+
+1. First, modify the rMATS_C/Makefile to use OpenBLAS. Edit the file:
+
+```bash
+cd rMATS_C
+nano Makefile
+```
+
+Find the line containing `LDFLAGS` and modify it to:
+
+```makefile
+LDFLAGS := -L/global/software/rocky-8.x86_64/gcc/linux-rocky8-x86_64/gcc-11.4.0/openblas-0.3.24-wvyyeerddvdvtdsfwyxxxx6voar6lc65/lib -lm -lgfortran -lgsl -lgslcblas -lgomp -lopenblas
+```
+
+2. Then modify the main Makefile to use the conda Python. Return to the main directory and edit the Makefile:
+
+```bash
+cd ..
+nano Makefile
+```
+
+Find the line:
+```makefile
+cd rMATS_pipeline; python setup.py build_ext;
+```
+
+Replace it with (adjust path according to your conda environment location):
+```makefile
+cd rMATS_pipeline; /global/home/users/$USER/.conda/envs/rmats_env/bin/python setup.py build_ext;
+```
+
+### 6. Build rMATS-Turbo
+
+Run the build script:
+
+```bash
+./build_rmats
+```
+
+### 7. Create Environment Setup Script
+
+Create a script to set up the environment whenever you need to use rMATS:
+
+```bash
+nano setup_rmats.sh
+```
+
+Add the following content:
+
+```bash
+#!/bin/bash
+
+# Load required modules
+module load r
+module load openblas
+
+# Activate conda environment
+conda activate rmats_env
+
+# Set PYTHONPATH to find the rmatspipeline module
+export PYTHONPATH=/global/scratch/users/$USER/rmats_turbo/rmats-turbo/rMATS_pipeline/build/lib.linux-x86_64-cpython-38:/global/scratch/users/$USER/rmats_turbo/rmats-turbo/rMATS_pipeline:$PYTHONPATH
+```
+
+Make the script executable:
+
+```bash
+chmod +x setup_rmats.sh
+```
+
+### Using rMATS-Turbo
+
+Each time you want to use rMATS-Turbo:
+
+1. Navigate to the rMATS-Turbo directory:
+```bash
+cd /global/scratch/users/$USER/rmats_turbo/rmats-turbo
+```
+
+2. Source the setup script:
+```bash
+source setup_rmats.sh
+```
+
+3. Verify the installation:
+```bash
+./rmats.py --help
+```
+
+## Optional: Create Convenient Alias
+
+Add this line to your `~/.bashrc` for easier access:
+
+```bash
+echo "alias setup_rmats='source /global/scratch/users/$USER/rmats_turbo/rmats-turbo/setup_rmats.sh'" >> ~/.bashrc
+```
+
+After adding the alias, you can simply type `setup_rmats` to set up your environment.
+
+## Troubleshooting
+
+If you encounter issues after disconnecting from the cluster:
+1. Make sure to source the setup script again
+2. Verify that all required modules are loaded
+3. Check that the conda environment is activated
+4. Ensure PYTHONPATH is set correctly
+
+## Note on Python Dependencies
+
+If you need to install additional Python packages, make sure to install them in the rmats_env conda environment:
+
+```bash
+conda activate rmats_env
+conda install package_name
+```
+
+## Version Information
+
+These instructions were tested with:
+- rMATS-Turbo v4.3.0
+- Python 3.8
+- Cython 0.29.36
+- Savio HPC environment
+
+For the latest updates or to report issues, please visit the [rMATS-Turbo GitHub repository](https://github.com/Xinglab/rmats-turbo).
