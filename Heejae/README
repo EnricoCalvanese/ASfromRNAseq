@@ -1,0 +1,149 @@
+Alternative Splicing Analysis Protocol for RNA-seq Data
+====================================================
+
+This protocol describes a complete workflow for analyzing alternative splicing events in RNA-seq data, specifically optimized for Arabidopsis thaliana. The workflow uses HISAT2 for alignment, followed by rMATS-turbo for alternative splicing analysis.
+
+Prerequisites
+------------
+- RNA-seq data (FASTQ format)
+- Reference genome and annotation (GTF format)
+- Computing environment with sufficient resources for RNA-seq analysis
+
+Software Requirements
+-------------------
+- FastQC (v0.12.1 or later) for quality control
+- HISAT2 (v2.2.1 or later) for read alignment
+- Samtools for BAM file manipulation
+- rMATS-turbo (built from source: https://github.com/Xinglab/rmats-turbo)
+
+Step 1: Quality Control
+----------------------
+First, assess the quality of your RNA-seq reads using FastQC. This step identifies potential sequencing issues and confirms read characteristics like length and quality scores.
+
+```bash
+#!/bin/bash
+# FastQC analysis script
+module load bio/fastqc/0.12.1
+mkdir -p fastqc_results
+
+# Run FastQC on all samples
+fastqc *.fastq.gz -o fastqc_results
+
+# Generate a combined report
+multiqc fastqc_results -o fastqc_results/multiqc
+```
+
+Key quality metrics to evaluate:
+- Per base sequence quality
+- Sequence length distribution
+- GC content
+- Overrepresented sequences
+- Adapter content
+
+Step 2: Genome Indexing
+----------------------
+Before alignment, create a HISAT2 index of your reference genome. For Arabidopsis analysis, include splice site information from the GTF file to improve alignment accuracy.
+
+```bash
+# Extract splice sites and exons from GTF
+hisat2_extract_splice_sites.py reference.gtf > splice_sites.txt
+hisat2_extract_exons.py reference.gtf > exons.txt
+
+# Build HISAT2 index
+hisat2-build \
+    -p [number_of_threads] \
+    --ss splice_sites.txt \
+    --exon exons.txt \
+    reference_genome.fa \
+    index_prefix
+```
+
+Step 3: Read Alignment
+---------------------
+Align RNA-seq reads to the reference genome using HISAT2. This step maps reads while considering splice junctions.
+
+```bash
+hisat2 \
+    -x index_prefix \
+    -U sample.fastq.gz \
+    --dta \
+    -p [number_of_threads] \
+    --new-summary \
+    | samtools view -bS - \
+    | samtools sort -o sample.sorted.bam
+```
+
+Important parameters:
+- --dta: optimizes alignment for downstream transcript assembly
+- -p: number of processor threads
+- Output is converted to sorted BAM format
+
+Step 4: Filter for Uniquely Mapped Reads
+--------------------------------------
+Create a subset of uniquely mapped reads to increase confidence in splice junction detection.
+
+```bash
+samtools view -bq 10 input.sorted.bam \
+    | samtools sort -o sample.unique.sorted.bam
+
+# Create index for the filtered BAM
+samtools index sample.unique.sorted.bam
+```
+
+Step 5: Prepare GTF Annotation
+----------------------------
+Format the GTF file to ensure compatibility with rMATS. The gene and transcript IDs should follow standard format:
+```
+transcript_id "AT1G01010.1"; gene_id "AT1G01010";
+```
+
+Step 6: Alternative Splicing Analysis with rMATS-turbo
+---------------------------------------------------
+Run rMATS-turbo to identify and quantify alternative splicing events between conditions.
+
+```bash
+python rmats.py \
+    --b1 sample1_bams.txt \
+    --b2 sample2_bams.txt \
+    --gtf annotation.gtf \
+    --od output_directory \
+    --tmp tmp_directory \
+    -t single \
+    --readLength [read_length] \
+    --nthread [number_of_threads] \
+    --libType fr-unstranded \
+    --task both \
+    --novelSS \
+    --individual-counts
+```
+
+Key parameters explained:
+- --b1/--b2: text files listing BAM files for each condition
+- --readLength: match to your sequencing read length
+- --novelSS: enables detection of unannotated splice sites
+- --individual-counts: provides detailed read counts for each sample
+
+Output Analysis
+--------------
+rMATS produces several output files for different types of alternative splicing events:
+- Skipped exons (SE)
+- Alternative 5' splice sites (A5SS)
+- Alternative 3' splice sites (A3SS)
+- Mutually exclusive exons (MXE)
+- Retained introns (RI)
+
+Each event type has corresponding files:
+- .MATS.JC.txt: Results using only junction counts
+- .MATS.JCEC.txt: Results using both junction counts and exon counts
+- fromGTF files: Alternative splicing events found in the annotation
+- raw input files: Read counts supporting each event
+
+Quality Control Considerations
+----------------------------
+Throughout the analysis, verify:
+- High alignment rates (>80%)
+- Sufficient read depth across splice junctions
+- Consistency in mapping rates across samples
+- Proper strand orientation if using stranded libraries
+
+This protocol provides a comprehensive framework for alternative splicing analysis in RNA-seq data. Adjust parameters based on your specific experimental design and requirements.
