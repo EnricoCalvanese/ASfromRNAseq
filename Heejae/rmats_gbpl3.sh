@@ -26,21 +26,18 @@ TMP_DIR=/global/scratch/users/enricocalvane/heejae_as/gbpl3_data/rmats_tmp
 # Create output directories
 mkdir -p $OUTPUT_BASE $TMP_DIR
 
-# Create BAM list files for wild type samples
-echo "${ALIGNED_DIR}/SRR18516933_wild_type_read1.unique.sorted.bam,${ALIGNED_DIR}/SRR18516934_wild_type_read1.unique.sorted.bam,${ALIGNED_DIR}/SRR18516935_wild_type_read1.unique.sorted.bam" > $OUTPUT_BASE/wt_bams_read1.txt
-echo "${ALIGNED_DIR}/SRR18516933_wild_type_read2.unique.sorted.bam,${ALIGNED_DIR}/SRR18516934_wild_type_read2.unique.sorted.bam,${ALIGNED_DIR}/SRR18516935_wild_type_read2.unique.sorted.bam" > $OUTPUT_BASE/wt_bams_read2.txt
+# Create BAM list files
+# For wild type samples - combining read1 and read2 for each replicate
+echo "${ALIGNED_DIR}/SRR18516933_wild_type_read1.unique.sorted.bam,${ALIGNED_DIR}/SRR18516933_wild_type_read2.unique.sorted.bam,${ALIGNED_DIR}/SRR18516934_wild_type_read1.unique.sorted.bam,${ALIGNED_DIR}/SRR18516934_wild_type_read2.unique.sorted.bam,${ALIGNED_DIR}/SRR18516935_wild_type_read1.unique.sorted.bam,${ALIGNED_DIR}/SRR18516935_wild_type_read2.unique.sorted.bam" > $OUTPUT_BASE/wt_bams.txt
 
-# Create BAM list files for gbpl3 samples
-echo "${ALIGNED_DIR}/SRR18516930_gbpl3_3_read1.unique.sorted.bam,${ALIGNED_DIR}/SRR18516931_gbpl3_2_read1.unique.sorted.bam,${ALIGNED_DIR}/SRR18516932_gbpl3_1_read1.unique.sorted.bam" > $OUTPUT_BASE/gbpl3_bams_read1.txt
-echo "${ALIGNED_DIR}/SRR18516930_gbpl3_3_read2.unique.sorted.bam,${ALIGNED_DIR}/SRR18516931_gbpl3_2_read2.unique.sorted.bam,${ALIGNED_DIR}/SRR18516932_gbpl3_1_read2.unique.sorted.bam" > $OUTPUT_BASE/gbpl3_bams_read2.txt
+# For gbpl3 samples - combining read1 and read2 for each replicate
+echo "${ALIGNED_DIR}/SRR18516930_gbpl3_3_read1.unique.sorted.bam,${ALIGNED_DIR}/SRR18516930_gbpl3_3_read2.unique.sorted.bam,${ALIGNED_DIR}/SRR18516931_gbpl3_2_read1.unique.sorted.bam,${ALIGNED_DIR}/SRR18516931_gbpl3_2_read2.unique.sorted.bam,${ALIGNED_DIR}/SRR18516932_gbpl3_1_read1.unique.sorted.bam,${ALIGNED_DIR}/SRR18516932_gbpl3_1_read2.unique.sorted.bam" > $OUTPUT_BASE/gbpl3_bams.txt
 
 # Function to run rMATS analysis
 run_rmats() {
     local comparison=$1
-    local b1_read1_file=$2
-    local b1_read2_file=$3
-    local b2_read1_file=$4
-    local b2_read2_file=$5
+    local b1_file=$2
+    local b2_file=$3
     local output_dir=${OUTPUT_BASE}/${comparison}
     local tmp_dir=${TMP_DIR}/${comparison}
 
@@ -49,10 +46,8 @@ run_rmats() {
     mkdir -p $output_dir $tmp_dir
     
     python $RMATS_PATH \
-        --b1 $b1_read1_file \
-        --b2 $b2_read1_file \
-        --s1 $b1_read2_file \
-        --s2 $b2_read2_file \
+        --b1 $b1_file \
+        --b2 $b2_file \
         --gtf $GTF_FILE \
         --od $output_dir \
         --tmp $tmp_dir \
@@ -73,9 +68,7 @@ echo "Starting rMATS comparison at $(date)"
 
 echo "Running gbpl3 vs WT comparison..."
 run_rmats "gbpl3_vs_wt" \
-    $OUTPUT_BASE/wt_bams_read1.txt \
-    $OUTPUT_BASE/wt_bams_read2.txt \
-    $OUTPUT_BASE/gbpl3_bams_read1.txt \
-    $OUTPUT_BASE/gbpl3_bams_read2.txt
+    $OUTPUT_BASE/wt_bams.txt \
+    $OUTPUT_BASE/gbpl3_bams.txt
 
 echo "rMATS analysis completed at $(date)"
