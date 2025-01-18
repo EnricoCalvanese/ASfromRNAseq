@@ -6,8 +6,6 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=24
 #SBATCH --time=1:00:00
-#SBATCH --mail-user=enrico_calvane@berkeley.edu
-#SBATCH --mail-type=ALL
 
 # Activate conda environment and set up library paths
 source ~/.bashrc
@@ -27,11 +25,11 @@ TMP_DIR=/global/scratch/users/enricocalvane/heejae_as/gbpl3_data/rmats_tmp
 mkdir -p $OUTPUT_BASE $TMP_DIR
 
 # Create BAM list files
-# For wild type samples - combining read1 and read2 for each replicate
-echo "${ALIGNED_DIR}/SRR18516933_wild_type_read1.unique.sorted.bam,${ALIGNED_DIR}/SRR18516933_wild_type_read2.unique.sorted.bam,${ALIGNED_DIR}/SRR18516934_wild_type_read1.unique.sorted.bam,${ALIGNED_DIR}/SRR18516934_wild_type_read2.unique.sorted.bam,${ALIGNED_DIR}/SRR18516935_wild_type_read1.unique.sorted.bam,${ALIGNED_DIR}/SRR18516935_wild_type_read2.unique.sorted.bam" > $OUTPUT_BASE/wt_bams.txt
+# For wild type samples
+echo "${ALIGNED_DIR}/SRR18516933_wild_type.unique.sorted.bam,${ALIGNED_DIR}/SRR18516934_wild_type.unique.sorted.bam,${ALIGNED_DIR}/SRR18516935_wild_type.unique.sorted.bam" > $OUTPUT_BASE/wt_bams.txt
 
-# For gbpl3 samples - combining read1 and read2 for each replicate
-echo "${ALIGNED_DIR}/SRR18516930_gbpl3_3_read1.unique.sorted.bam,${ALIGNED_DIR}/SRR18516930_gbpl3_3_read2.unique.sorted.bam,${ALIGNED_DIR}/SRR18516931_gbpl3_2_read1.unique.sorted.bam,${ALIGNED_DIR}/SRR18516931_gbpl3_2_read2.unique.sorted.bam,${ALIGNED_DIR}/SRR18516932_gbpl3_1_read1.unique.sorted.bam,${ALIGNED_DIR}/SRR18516932_gbpl3_1_read2.unique.sorted.bam" > $OUTPUT_BASE/gbpl3_bams.txt
+# For gbpl3 samples
+echo "${ALIGNED_DIR}/SRR18516930_gbpl3_3.unique.sorted.bam,${ALIGNED_DIR}/SRR18516931_gbpl3_2.unique.sorted.bam,${ALIGNED_DIR}/SRR18516932_gbpl3_1.unique.sorted.bam" > $OUTPUT_BASE/gbpl3_bams.txt
 
 # Function to run rMATS analysis
 run_rmats() {
