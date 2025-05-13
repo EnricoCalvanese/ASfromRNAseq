@@ -19,18 +19,9 @@ Software Requirements
 Step 1: Quality Control
 ----------------------
 First, assess the quality of your RNA-seq reads using FastQC. This step identifies potential sequencing issues and confirms read characteristics like length and quality scores.
-
-```bash
-#!/bin/bash
-# FastQC analysis script
-module load bio/fastqc/0.12.1
-mkdir -p fastqc_results
-
-# Run FastQC on all samples
-fastqc *.fastq.gz -o fastqc_results
-
-# Generate a combined report
-multiqc fastqc_results -o fastqc_results/multiqc
+The script to run is run_fastqc.sh. It must be run in the rmats_env (conda activate rmats_env) or any environment that has 
+fastqc and multiqc installed. Run the script directly in the folder with the fastq files. Fastq files can be still zipped. 
+Make sure the script can correctly find your files' names during the 'find' step. 
 ```
 
 Key quality metrics to evaluate:
