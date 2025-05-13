@@ -1,4 +1,3 @@
-
 #!/bin/bash
 #SBATCH --job-name=hisat2_pnet4
 #SBATCH --account=fc_rnaseq
