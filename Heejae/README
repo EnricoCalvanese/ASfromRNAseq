@@ -51,7 +51,8 @@ hisat2-build \
 
 Step 3: Read Alignment
 ---------------------
-Align RNA-seq reads to the reference genome using HISAT2. This step maps reads while considering splice junctions.
+Align RNA-seq reads to the reference genome using HISAT2. This step maps reads while considering splice junctions. Create a specific hisat script that matches your samples' names and locations. Pay attention to the way 
+the script implements a for loop to pair read as the specific nomenclature will depend entirely on how your samples were named. 
 
 ```bash
 hisat2 \
