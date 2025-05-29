@@ -14,7 +14,7 @@ conda activate rmats_env
 # Define paths
 OUTDIR=/global/scratch/users/enricocalvane/heejae_as/gbpl3_data/sashimi_plot_output
 GFF3=/global/scratch/users/enricocalvane/heejae_as/reference/Arabidopsis_thaliana.TAIR10.61.gff3
-COORDINATE="4:-:11860409:11866475:$GFF3"
+COORDINATE="5:+:6751798:6755293:$GFF3"
 
 # BAM files (WT = b1, gbpl3 = b2)
 B1_BAMS="/global/scratch/users/enricocalvane/heejae_as/gbpl3_data/aligned_bams/SRR18516933_wild_type.unique.sorted.bam,/global/scratch/users/enricocalvane/heejae_as/gbpl3_data/aligned_bams/SRR18516934_wild_type.unique.sorted.bam,/global/scratch/users/enricocalvane/heejae_as/gbpl3_data/aligned_bams/SRR18516935_wild_type.unique.sorted.bam"
