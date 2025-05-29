@@ -6,6 +6,8 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=8
 #SBATCH --time=00:30:00
+#SBATCH --mail-user=enrico_calvane@berkeley.edu
+#SBATCH --mail-type=ALL
 
 # Activate conda environment
 source ~/.bashrc
