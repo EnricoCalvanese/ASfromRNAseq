@@ -10,9 +10,16 @@
 #SBATCH --mail-type=ALL
 #SBATCH --output=siz1_rmats.log
 
-
 # Activate environment
 mamba activate rmats
+
+# Verify rMATS is available
+if ! command -v rmats.py >/dev/null 2>&1; then
+    echo "Error: rmats.py not found in PATH"
+    exit 1
+fi
+
+echo "Using rMATS: $(which rmats.py)"
 
 # Define paths for rMATS analysis
 GTF_FILE=/global/scratch/users/enricocalvane/minRNAseq/as/Arabidopsis_thaliana.TAIR10.61.gtf
@@ -70,7 +77,8 @@ run_rmats() {
     
     mkdir -p $output_dir $tmp_dir
     
-    python $RMATS_PATH \
+    # Run rMATS directly
+    rmats.py \
         --b1 $b1_file \
         --b2 $b2_file \
         --gtf $GTF_FILE \
@@ -83,7 +91,9 @@ run_rmats() {
         --libType fr-unstranded \
         --task both \
         --novelSS \
-        --individual-counts
+        --individual-counts \
+        --variable-read-length \
+        --allow-clipping
     
     if [[ $? -eq 0 ]]; then
         echo "✓ Completed rMATS analysis for $comparison at $(date)"
