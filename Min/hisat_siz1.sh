@@ -8,6 +8,7 @@
 #SBATCH --time=02:00:00
 #SBATCH --mail-user=enrico_calvane@berkeley.edu
 #SBATCH --mail-type=ALL
+#SBATCH --output=HISAT_alignment.log
 
 # Load required modules
 module load bio/hisat2/2.2.1-gcc-11.4.0
